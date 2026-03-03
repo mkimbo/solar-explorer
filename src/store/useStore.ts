@@ -12,6 +12,14 @@ interface SolarSystemState {
   triggerCameraReset: () => void;
   setFocusedPlanet: (id: string | null) => void;
   setEarthPosition: (pos: THREE.Vector3) => void;
+
+  // Pulsar State
+  showMagneticField: boolean;
+  showPulsarPostProcessing: boolean;
+  resetTelemetryTrigger: number;
+  toggleMagneticField: () => void;
+  togglePulsarPostProcessing: () => void;
+  triggerResetTelemetry: () => void;
 }
 
 export const useStore = create<SolarSystemState>((set) => ({
@@ -30,4 +38,19 @@ export const useStore = create<SolarSystemState>((set) => ({
     })),
   setFocusedPlanet: (id) => set({ focusedPlanet: id }),
   setEarthPosition: (pos) => set({ earthPosition: pos }),
+
+  // Pulsar State
+  showMagneticField: true,
+  showPulsarPostProcessing: true,
+  resetTelemetryTrigger: 0,
+  toggleMagneticField: () =>
+    set((state) => ({ showMagneticField: !state.showMagneticField })),
+  togglePulsarPostProcessing: () =>
+    set((state) => ({
+      showPulsarPostProcessing: !state.showPulsarPostProcessing,
+    })),
+  triggerResetTelemetry: () =>
+    set((state) => ({
+      resetTelemetryTrigger: state.resetTelemetryTrigger + 1,
+    })),
 }));
