@@ -1,36 +1,52 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Cinematic 3D Solar System Explorer 🪐
 
-## Getting Started
+An immersive, high-fidelity WebGL visualization of our Solar System and astrophysical phenomena, built with a modern React 3D stack. This project aims to deliver a "Google Earth-style" cinematic experience in the browser, complete with realistic lighting, glowing celestial bodies, and dynamic telemetry tracking.
+
+## 🚀 Tech Stack
+
+- **Framework**: Next.js 15 (App Router)
+- **Styling**: Tailwind CSS v4
+- **3D Engine**: Three.js, React Three Fiber (R3F), and React Three Drei
+- **State Management**: Zustand
+- **VFX**: @react-three/postprocessing (Bloom effects, etc.)
+
+## ✨ Features & Highlights
+
+### 1. The Solar System (`/`)
+
+- **Realistic Lighting & Void**: A deep procedural starfield background with an intense `PointLight` casting accurate shadows from the Sun.
+- **Logarithmic Scaling**: A custom mathematical approach to rendering immense astrophysical distances interactively without losing the sense of scale.
+- **Orbiting Planetary Bodies**: Automated mapping of the 8 major planets running live orbital simulations (`useFrame`).
+- **Dynamic Asteroid Belt**: Performant instanced rendering (`InstancedMesh`) tracking 2,000 distinct geometries flying through space.
+- **Interactive Telemetry HUD**: Floating glassmorphism UI overlay built with Tailwind, decoupled from the 3D loop for maximum performance. Clicking on any planet smoothly animates the camera down to its surface level.
+
+![Solar Explorer Telemetry](./public/solar_explorer_scroll_test.webp)
+
+### 2. Real-Time Gravity Wells
+
+Toggle the "Gravity Wells" visualization to see a dynamic topological WebGL shader grid. The wireframe physically deforms downwards in real-time calculated against the immediate physical location and mass of celestial bodies over time.
+
+![Gravity Wells Grid](./public/gravity_wells.png)
+
+### 3. The Pulsar Phenomenon (`/pulsar`)
+
+A terrifyingly energetic astrophysics simulation of a rapidly rotating neutron star.
+
+- **The Core**: A blindingly bright, highly emissive sphere rotating at over 300 RPM.
+- **Relativistic Jets**: Opposing massive particle arrays simulating concentrated radiation emissions shooting out from the poles.
+- **Accretion Disk**: 10,000 deep-purple particles locked in an independent, rapidly swirling orbit alongside a glowing cyan wireframe torus representing the magnetic field.
+- **Telemetry Dashboard**: A fully functional dashboard utilizing a Space Mono aesthetic with live fluctuating data readouts for Pulse Frequency and Surface Temperature.
+
+![Pulsar Simulation](./public/pulsar_final_state.png)
+
+## 💻 Getting Started
 
 First, run the development server:
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Open [http://localhost:3000](http://localhost:3000) with your browser to explore the Solar System.
+Navigate to [http://localhost:3000/pulsar](http://localhost:3000/pulsar) to view the Pulsar simulation.
