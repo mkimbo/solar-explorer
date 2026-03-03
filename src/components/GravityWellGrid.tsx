@@ -40,12 +40,14 @@ varying float vDeformation;
 
 void main() {
     float intensity = clamp(-vDeformation / 20.0, 0.0, 1.0);
-    vec3 baseColor = vec3(0.05, 0.1, 0.3);
-    vec3 deepColor = vec3(0.2, 0.6, 1.0);
+    // Darker colors to prevent blowing out the Bloom threshold
+    vec3 baseColor = vec3(0.02, 0.04, 0.1); 
+    vec3 deepColor = vec3(0.1, 0.3, 0.6);
     
     vec3 color = mix(baseColor, deepColor, intensity);
     
-    gl_FragColor = vec4(color, 0.15 + intensity * 0.6);
+    // Lower opacity to reduce AdditiveBlending accumulation
+    gl_FragColor = vec4(color, 0.05 + intensity * 0.3);
 }
 `;
 

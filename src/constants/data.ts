@@ -6,6 +6,8 @@ export interface CelestialBody {
   orbitSpeed: number;
   rotationSpeed: number;
   textureUrl: string | null;
+  normalMapUrl?: string | null;
+  roughnessMapUrl?: string | null;
   color: string;
   type: "star" | "planet" | "moon" | "dwarf";
   mass: number;
@@ -59,6 +61,10 @@ export const celestialData: CelestialBody[] = [
     rotationSpeed: 0.02,
     textureUrl:
       "https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/earth_atmos_2048.jpg",
+    normalMapUrl:
+      "https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/earth_normal_2048.jpg",
+    roughnessMapUrl:
+      "https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/earth_specular_2048.jpg",
     color: "#2b82c9",
     type: "planet",
     mass: 25,

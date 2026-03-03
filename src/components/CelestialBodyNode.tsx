@@ -1,40 +1,84 @@
 "use client";
 
-import { useRef, useState, useMemo } from "react";
+import { useRef, useState, useMemo, useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
-import { Html, useTexture } from "@react-three/drei";
+import { Html } from "@react-three/drei";
 import * as THREE from "three";
 import { CelestialBody } from "@/constants/data";
 import { useStore } from "@/store/useStore";
 
 function SafeTexture({
   url,
+  normalMapUrl,
+  roughnessMapUrl,
   color,
   isStar,
 }: {
   url: string | null;
+  normalMapUrl?: string | null;
+  roughnessMapUrl?: string | null;
   color: string;
   isStar: boolean;
 }) {
-  let texture = null;
-  try {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    texture = url ? useTexture(url) : null;
-  } catch (_e) {
-    console.warn("Failed to load texture", url);
-  }
+  const [maps, setMaps] = useState<{
+    map: THREE.Texture | null;
+    normalMap: THREE.Texture | null;
+    roughnessMap: THREE.Texture | null;
+  }>({ map: null, normalMap: null, roughnessMap: null });
+
+  useEffect(() => {
+    const loader = new THREE.TextureLoader();
+    const newMaps: any = { map: null, normalMap: null, roughnessMap: null };
+
+    const urlsToLoad = [
+      { key: "map", url },
+      { key: "normalMap", url: normalMapUrl },
+      { key: "roughnessMap", url: roughnessMapUrl },
+    ].filter((i) => i.url);
+
+    if (urlsToLoad.length === 0) return;
+
+    let loadedCount = 0;
+    urlsToLoad.forEach((item) => {
+      loader.load(
+        item.url!,
+        (tex) => {
+          if (item.key === "map") tex.colorSpace = THREE.SRGBColorSpace;
+          newMaps[item.key] = tex;
+          loadedCount++;
+          if (loadedCount === urlsToLoad.length) {
+            setMaps({ ...newMaps });
+          }
+        },
+        undefined,
+        () => {
+          console.warn("Failed texture:", item.url);
+          loadedCount++;
+          if (loadedCount === urlsToLoad.length) {
+            setMaps({ ...newMaps });
+          }
+        },
+      );
+    });
+  }, [url, normalMapUrl, roughnessMapUrl]);
 
   if (isStar) {
     return (
-      <meshBasicMaterial map={texture} color={texture ? "#ffffff" : color} />
+      <meshBasicMaterial
+        map={maps.map || null}
+        color={maps.map ? "#ffffff" : color}
+        toneMapped={false}
+      />
     );
   }
 
   return (
     <meshStandardMaterial
-      map={texture}
-      color={texture ? "#ffffff" : color}
-      roughness={0.7}
+      map={maps.map || null}
+      normalMap={maps.normalMap || null}
+      roughnessMap={maps.roughnessMap || null}
+      color={maps.map ? "#ffffff" : color}
+      roughness={maps.roughnessMap ? 1 : 0.7}
       metalness={0.1}
     />
   );
@@ -97,6 +141,7 @@ export default function CelestialBodyNode({ body }: { body: CelestialBody }) {
         orbitPath &&
         body.distanceFromSun > 0 &&
         body.type !== "moon" && (
+          // @ts-expect-error R3F intrinsic elements conflict with React SVG types
           <line geometry={orbitPath}>
             <lineBasicMaterial
               color={body.color}
@@ -110,6 +155,7 @@ export default function CelestialBodyNode({ body }: { body: CelestialBody }) {
       <group ref={orbitGroupRef}>
         <mesh
           ref={meshRef}
+          name={body.id}
           position={[body.distanceFromSun, 0, 0]}
           castShadow
           receiveShadow
@@ -117,6 +163,8 @@ export default function CelestialBodyNode({ body }: { body: CelestialBody }) {
           <sphereGeometry args={[body.radius, 64, 64]} />
           <SafeTexture
             url={body.textureUrl}
+            normalMapUrl={body.normalMapUrl}
+            roughnessMapUrl={body.roughnessMapUrl}
             color={body.color}
             isStar={body.type === "star"}
           />
@@ -127,7 +175,10 @@ export default function CelestialBodyNode({ body }: { body: CelestialBody }) {
               zIndexRange={[100, 0]}
               className="pointer-events-none"
             >
-              <div className="flex flex-col items-center bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-md border border-white/10 shadow-lg transform translate-x-4 -translate-y-4">
+              <div
+                onClick={() => useStore.getState().setFocusedPlanet(body.id)}
+                className="flex flex-col items-center bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-md border border-white/10 shadow-lg transform translate-x-4 -translate-y-4 pointer-events-auto cursor-pointer hover:border-white/30 transition-all hover:bg-white/10"
+              >
                 <span className="text-white font-sans font-medium text-sm tracking-wide">
                   {body.name}
                 </span>
